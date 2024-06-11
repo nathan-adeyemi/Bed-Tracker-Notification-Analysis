@@ -20,6 +20,7 @@ max_error_bound <- 4
 budget_min <- 10       # Start of the sequence
 budget_max <- 5000      # End of the sequence
 n_budgets <- 40   # Number of points in the sequence
+num_obs <- 10
 results_directory <- file.path('Results','numerical_experiments','repair_budget_sensitivity_analysis')
 file_name <- gsub('\\.','_',paste('lambda',lambda,'mu',mu,'servers',servers,sep = '-'))
 
@@ -45,7 +46,9 @@ generated_states <- sample_trajs$states
 generated_times <- sample_trajs$times
 
 # Create a sequence in log space
-thetas <- c(0,rep(max_error_bound,length(generated_states)-2),0)
+obs_idx <- c(1,2 + sample(x = length(generated_states)-2,size = num_obs),length(generated_states))
+thetas <- rep(max_error_bound,length(generated_states))
+thetas[obs_idx] <- 0
 budgets <- seq(log(budget_min,base = 2), log(budget_max, base = 2), length.out = n_budgets)
 # Convert back to the original space
 budgets <- floor(2 ** budgets)
@@ -75,9 +78,9 @@ traj_likelihoods <-
       K = system_cap
    )
 
-df <- data.table(`Repair Budget` = budgets, 
-                 `Trajectory Log-Likelihood` = traj_likelihoods, 
-                 `Solution Runtime` = sapply(X = repair_results, 
+df <- data.table(`Repair Budget` = budgets,
+                 `Trajectory Log-Likelihood` = traj_likelihoods,
+                 `Solution Runtime` = sapply(X = repair_results,
                                              FUN = function(res) res$runtime))
 # Scale factor for the secondary y-axis
 scale_factor <- df[,min(`Trajectory Log-Likelihood`)] / df[,max(`Solution Runtime`)]
@@ -103,7 +106,7 @@ plot <- ggplot(df, aes(x = `Repair Budget`)) +
     labels = c("Log-Likelihood of the Repaired Trajectory", "Execution Time")
   )
 )
-   
+
 ggsave(gen_results_path(res_dir = results_directory, filename = file_name, ext = '.png'),
        plot = plot,
        height = 6,

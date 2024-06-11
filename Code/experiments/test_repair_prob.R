@@ -4,7 +4,8 @@ test_servers <- 15
 test_queue_cap <- 0
 test_system_cap <- test_queue_cap + test_servers
 data_error_rate <- 0.25
-
+num_obs <- 10
+max_error_bound <- 5
 plot_ylim <- 150
 corrupted_data <- FALSE
 
@@ -38,9 +39,10 @@ if (corrupted_data){
    }
    test_delta <- floor(0.75*sum(thetas))
 } else {
-   max_error_bound <- 3
-   thetas <- c(0,rep(max_error_bound,length(generated_states)-2),0)
-   test_delta <- 15
+   # Create a sequence in log space
+   obs_idx <- c(1,2 + sample(x = length(generated_states)-2,size = num_obs),length(generated_states))
+   thetas <- rep(max_error_bound,length(generated_states))
+   thetas[obs_idx] <- 0
 }
 
 repair_results <- repair_prob_dp(
@@ -67,7 +69,7 @@ plot(
    type = 's',
    col = 'black',
    lty = 3,
-   lwd = 5,
+   lwd = `if`(corrupted_data,5,1.4),
    xlab = 'time',
    ylab = 'Number in System'
 )
@@ -79,17 +81,26 @@ lines(x = plot_x_axis[seq(plot_ylim)],
       lwd = 3,
       lty = 1)
 
-abline(v = plot_x_axis[which(corrupted_states != generated_states)])
+if(corrupted_data){
+   abline(v = plot_x_axis[which(corrupted_states != generated_states)])
+} else {
+   points(x = plot_x_axis[obs_idx],
+          y = generated_states[obs_idx],
+          col = 'red',
+          pch = 17,
+          cex=2)
+}
+
 
 legend(
    'bottom',
    legend = c(
       'Original State Trajectory',
-      # 'Corrupted Trajectory',
+      `if`(corrupted_data,'Corrupted Trajectory',integer(0)),
       'Repaired State Trajectory'
    ),
    col = c('black',
-           # 'red',
+           `if`(corrupted_data,'red',integer(0)),
            'blue'),
    lty=c(2,1),
    lwd = c(2,2)
@@ -98,7 +109,6 @@ legend(
 traj_likelihoods <-
    lapply(
       X = list(generated_states,
-               # corrupted_states,
                fixed_traj),
       FUN = calc_subtraj_prob,
       times_vector = generated_times,

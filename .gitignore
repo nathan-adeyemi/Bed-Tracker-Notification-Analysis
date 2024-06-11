@@ -1,2 +1,10 @@
 Code/deprecated
 */.DS_Store
+
+# Ignore the Data and Results dirrectories
+Data/
+Results/
+
+# Allow trhe numerical experiments results and any input requirements
+!Results/numerical_experiments
+!Data/function_requirements
