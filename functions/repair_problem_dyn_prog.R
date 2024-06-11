@@ -7,16 +7,20 @@ repair_prob_dp  <-
              mu,
              c = 1,
              K = NA,
-             state_cutoff = NA) {
-        orig_seq_likelihood <- calc_subtraj_prob(
-            state_vector = data_seq,
-            times_vector = time_seq,
-            lambda = lambda,
-            mu = mu,
-            c = c,
-            K = K,
-            cumm_endpoint_dwell = T
-        )
+             state_cutoff = NA,
+             report = FALSE) {
+
+        seq_likelihood <- function(seq){
+            calc_subtraj_prob(
+                state_vector = seq,
+                times_vector = time_seq,
+                lambda = lambda,
+                mu = mu,
+                c = c,
+                K = K,
+                cumm_endpoint_dwell = T
+            )
+        } 
 
         check_infeasible <- function(struc, index) {
             return(all(sapply(
@@ -178,6 +182,7 @@ repair_prob_dp  <-
 
         runtime <- system.time(expr = {
         # Loop through the DP structure
+        orig_seq_like <- seq_likelihood(data_seq)
         for (i in 2:length(dp_struc)) {
             # Loop through repair budgets available at data_seq[i]
             for (j in seq(length(dp_struc[[i]]))) {
@@ -291,7 +296,7 @@ repair_prob_dp  <-
                                     }
                                 ))
 
-                                if (prev_repair_likes[repair] + p_max  <= orig_seq_likelihood) {
+                                if (prev_repair_likes[repair] + p_max  <= orig_seq_like) {
                                     return(-Inf)
                                 } else {
                                     return(prev_repair_likes[repair])
@@ -354,7 +359,18 @@ repair_prob_dp  <-
 
         }
 
-        return(list(trajectory = repaired_traj,
-                    budget = curr_delta,
-                    runtime = runtime[3]))
+        result_list <- list(trajectory = repaired_traj,
+                            budget = curr_delta,
+                            runtime = runtime[3],
+                            likelihood = seq_likelihood(repaired_traj))
+
+        if(report){
+            cat('The original simulated trajectory had a likelihood of ', orig_seq_like, " and a total repair budget of ", delta,
+                '\n',
+                'The repaired trajectory has a likelihood of ',result_list$likelihood,
+                '\n',
+                'There was a remaining budget of ',result_list$budget,' and solving took ',result_list$runtime,' seconds.')
+        }
+
+        return(result_list)
     }

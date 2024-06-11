@@ -27,6 +27,7 @@ TIME = "${TIME}"
 NUM_CPUS_PER_NODE = "${NUM_CPUS}"
 MEMORY = "${MEMORY}"
 PARTITION_OPTION = "${PARTITION_OPTION}"
+ADD_ARGS="${ADD_ARGS}"
 
 
 if __name__ == "__main__":
@@ -70,6 +71,12 @@ if __name__ == "__main__":
         help = "How long to reserve the compute node for"
     )
     
+    parser.add_argument(
+        "--add-args",
+        type=str,
+        help='Additional arguments so pass to the R script'
+    )
+    
     args = parser.parse_args()
     
     job_name = args.exp_name
@@ -87,6 +94,7 @@ if __name__ == "__main__":
     text = text.replace(PARTITION_OPTION, partition_option)
     text = text.replace(TIME, str(args.time))
     text = text.replace(MEMORY,str(args.memory))
+    text = text.replace(ADD_ARGS,str(args.add_args))
     text = text.replace(
         "# THIS FILE IS A TEMPLATE AND IT SHOULD NOT BE DEPLOYED TO " "PRODUCTION!",
         "# THIS FILE IS MODIFIED AUTOMATICALLY FROM TEMPLATE AND SHOULD BE "

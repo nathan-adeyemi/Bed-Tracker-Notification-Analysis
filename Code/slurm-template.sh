@@ -15,4 +15,4 @@ module load anaconda3/2022.05
 eval "$(conda shell.bash hook)"
 conda activate ed_ip_simulation
 
-singularity exec --bind "/scratch/:/scratch/,/work/:/work/" /shared/container_repository/rstudio/rocker-geospatial-4.2.1.sif Rscript Code/experiments/${JOB_NAME}.R
+singularity exec --bind "/scratch/:/scratch/,/work/:/work/" /shared/container_repository/rstudio/rocker-geospatial-4.2.1.sif Rscript Code/experiments/${JOB_NAME}.R ${ADD_ARGS}

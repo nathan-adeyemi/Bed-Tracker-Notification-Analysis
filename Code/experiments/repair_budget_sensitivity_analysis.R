@@ -1,6 +1,5 @@
 source(".Rprofile")
 
-
 gen_results_path <- function(res_dir,filename,ext = '.rds'){
    if(!grepl('\\.',ext)){
       ext <- paste0("\\.",ext)
@@ -9,20 +8,30 @@ gen_results_path <- function(res_dir,filename,ext = '.rds'){
    path <- file.path(res_dir,filename)
    return(path)
 }
+job_name <- commandArgs(trailingOnly = TRUE)
 
-lambda  <- 0.75
-mu <- 0.15
-servers <- 15
-queue_cap <- 0
+if(length(args)> 0){
+   args <- yaml.load_file('Code/configs/repair_budget_sensitivity_analysis.yaml')[[job_name]]
+   list2env(args,envir = environment())
+}else{
+   lambda  <- 1.5
+   mu <- 0.15
+   servers <- 25
+   queue_cap <- 0
+   theta_i_max <-  8
+   budget_min <- 1       # Start of the sequence
+   budget_max <- 100      # End of the sequence
+   n_budgets <- 40   # Number of points in the sequence
+   budget_log <- 2 # Controls spacing of the evaluated budgets
+   num_obs <- 10
+   job_name <- 'test'
+   warmup <- 10
+   sim_length <- 100
+}
+
 system_cap <- queue_cap + servers
-plot_ylim <- 150
-max_error_bound <- 4
-budget_min <- 10       # Start of the sequence
-budget_max <- 5000      # End of the sequence
-n_budgets <- 40   # Number of points in the sequence
-num_obs <- 10
-results_directory <- file.path('Results','numerical_experiments','repair_budget_sensitivity_analysis')
 file_name <- gsub('\\.','_',paste('lambda',lambda,'mu',mu,'servers',servers,sep = '-'))
+results_directory <- paste(results_directory,sep = "_")
 
 if(!dir.exists(results_directory)){
    dir.create(results_directory,recursive = TRUE)
@@ -35,8 +44,8 @@ sample_trajs <- gen_sample_queue_states(
    mu = mu,
    c = servers,
    K = queue_cap,
-   warmup=25,
-   sim_length = 200
+   warmup=warmup,
+   sim_length = sim_length
 )
 
 if (length(sample_trajs) == 1) {
@@ -45,13 +54,14 @@ if (length(sample_trajs) == 1) {
 generated_states <- sample_trajs$states
 generated_times <- sample_trajs$times
 
-# Create a sequence in log space
+# Create trajectory observation points
 obs_idx <- c(1,2 + sample(x = length(generated_states)-2,size = num_obs),length(generated_states))
-thetas <- rep(max_error_bound,length(generated_states))
+thetas <- rep(theta_i_max,length(generated_states))
 thetas[obs_idx] <- 0
-budgets <- seq(log(budget_min,base = 2), log(budget_max, base = 2), length.out = n_budgets)
-# Convert back to the original space
-budgets <- floor(2 ** budgets)
+
+# Create a sequence of budgets in log_2 space
+budgets <- seq(log(budget_min,base = budget_log), log(budget_max, base = budget_log), length.out = n_budgets)
+budgets <- floor(budget_log ** budgets)
 
 # Recreate the observation trajectories with each different budget
 repair_results <- mclapply(
@@ -67,16 +77,9 @@ repair_results <- mclapply(
    mc.cores = availableCores()
 )
 
-traj_likelihoods <-
-   sapply(
-      X = lapply(X = repair_results, FUN = function(res) res$trajectory),
-      FUN = calc_subtraj_prob,
-      times_vector = generated_times,
-      lambda = lambda,
-      mu = mu,
-      c = servers,
-      K = system_cap
-   )
+save.image(file = gen_results_path(res_dir = results_directory, filename = file_name , ext = '.RData'))
+
+traj_likelihoods <- lapply(X = repair_results, FUN = function(res) res$likelihood)
 
 df <- data.table(`Repair Budget` = budgets,
                  `Trajectory Log-Likelihood` = traj_likelihoods,

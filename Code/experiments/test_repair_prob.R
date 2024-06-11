@@ -53,7 +53,8 @@ repair_results <- repair_prob_dp(
    lambda = test_lambda,
    mu = test_mu,
    c = test_servers,
-   K = test_system_cap
+   K = test_system_cap,
+   report = TRUE
 )
 
 
@@ -117,12 +118,5 @@ traj_likelihoods <-
       c = test_servers,
       K = test_system_cap
    )
-
-cat('The original simulated trajectory has a likelihood of ',
-    traj_likelihoods[[1]],
-    '\n',
-    'The repaired trajectory had a likelihood of ',traj_likelihoods[[2]],
-    '\n',
-    'There was a remaining budget of',remaining_budget,'and solving took ',run_time,'seconds.')
 
 print(table(fixed_traj - shift(fixed_traj,type= 'lag',n=1)))
