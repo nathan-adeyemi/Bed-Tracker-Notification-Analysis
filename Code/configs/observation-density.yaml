@@ -1,0 +1,76 @@
+debug:
+  analysis_path: Code/analyses/observation-density.R
+  warmup: 100
+  sim_length: 50
+  theta_i_max: 3
+  results_directory: Results/observation_analysis
+  delta: 50
+  num_replications: 3
+  seed: 42
+  observation-queues:
+    queue-1:
+      lambda: 0.9
+      mu: 0.5
+      servers: 4
+      queue_cap: 20
+    queue-2:
+      lambda: 1.0
+      mu: 0.4
+      servers: 3
+      queue_cap: 15
+  params:
+    observation_density:
+      min: 0.5
+      max: 0.75
+      q: 0.1
+    init_est_proportion:
+      min: 0.85
+      max: 1.15
+      q: 0.05
+  plot:
+      x_axis: observation_density
+      style: whitegrid
+      size: (8,6)
+      axes_names:
+        xlabel: "Observation Density (%)"
+        ylabel: "\u0b3d"
+
+full:
+  analysis_path: Code/analyses/observation-density.R
+  warmup: 1000
+  sim_length: 500
+  results_directory: Results/observation_analysis
+  theta_i_max: 4
+  delta: 300
+  num_replications: 16
+  seed: 42
+  observation-queues:
+    queue-1:
+      lambda: 0.9
+      mu: 0.3
+      servers: 5
+      queue_cap: 2
+    queue-2:
+      lambda: 1.5
+      mu: 0.2
+      servers: 10
+      queue_cap: 5
+  params:
+    observation_density:
+      min: 0.0
+      max: 0.95
+      q: 0.05
+    init_est_proportion:
+      min: 0.5
+      max: 1.5
+      q: 0.1
+  plot:
+    x_axis: observation_density
+    style: whitegrid
+    size: (8,6)
+    splitting_var: 'init_est_proportion'
+    plot_title: ['$\nu_{\pi_{S(t)\,<\,c}}$', "$\\nu_{\\bar{L}}$"]
+    legend_title: "Repair Estimate:\n % of Queue $\\lambda$"
+    axes_names:
+      xlabel: "Observation Density (%)"
+      ylabel: $\nu$

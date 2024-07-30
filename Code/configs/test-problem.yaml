@@ -1,0 +1,13 @@
+lambda : 0.9
+mu: 1
+servers: 2
+queue_cap: 100
+data_error_rate: 0.25
+max_error_bound: 3
+num_data_pts: 100
+warmup: 1000
+sim_length: 500
+delta_proportion: 0.4
+partially_observable: TRUE
+num_obs: 50
+results_directory: Results/test_problem

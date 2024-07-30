@@ -1,0 +1,28 @@
+dask:
+  debug: 
+    cores: 10
+    processes: 1
+    memory: 8GB
+    queue: short
+    local_directory: /home/adeyemi.n/MH_Simulation/Policy_Interventions_to_Improve_Mental_Healthcare_Access
+    log_directory: logs/dask-worker-logs/
+    job_script_prologue: ["conda init bash \n", "module load singularity/3.5.3 \n", "module load anaconda3/2022.05 \n", "conda activate SMAC \n"]
+    worker_extra_args: ['--nthreads 2']
+    silence_logs: debug
+  
+  full:
+    cores: 40
+    processes: 1
+    memory: 64GB
+    queue: short
+    local_directory: /home/adeyemi.n/MH_Simulation/Bed-Tracker-Notification-Analysis
+    log_directory: /scratch/adeyemi.n/logs/dask-worker-logs/
+    job_script_prologue: ["conda init bash \n", "module load singularity/3.5.3 \n", "module load anaconda3/2022.05 \n", "conda activate SMAC \n"]
+    worker_extra_args: ['--nthreads 4']
+    silence_logs: info
+
+multiprocessing:
+  debug:
+    processes: 20
+  full:
+    processes: 80

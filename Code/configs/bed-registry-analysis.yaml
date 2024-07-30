@@ -1,0 +1,51 @@
+debug:
+  results_directory: Results/bed-registry-analysis
+  seed: 42
+  num_pts: 10
+  theta_i_max: 3
+  params:
+    delta: 
+      min: 50
+      max: 150
+      q: 50
+    init_lambda_prop:
+      min: 0.85
+      max: 1
+      q: .15
+
+  plot:
+    x_axis: delta
+    style: whitegrid
+    size: (8,6)
+    splitting_var: 'theta'
+    plot_title: "Perceived MH Treatment Network $\rho$"
+    legend_title: "Maximum"
+    axes_names:
+      xlabel: "Observation Density (%)"
+      ylabel: $\nu$
+
+full:
+  results_directory: Results/bed-registry-analysis
+  num_pts: 150
+  theta_i_max: 8
+  seed: 42
+  params:
+    delta: 
+      min: 10
+      max: 150
+      q: 14
+    init_lambda_prop:
+      min: 0.8
+      max: 1.2
+      q: .1
+
+  plot:
+    x_axis: delta
+    style: whitegrid
+    size: (8,6)
+    splitting_var: 'theta'
+    plot_title: "Perceived MH Treatment Network $\rho$"
+    legend_title: "Maximum"
+    axes_names:
+      xlabel: "Observation Density (%)"
+      ylabel: $\nu$

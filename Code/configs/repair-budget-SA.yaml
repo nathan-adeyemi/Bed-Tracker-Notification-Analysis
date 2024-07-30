@@ -1,0 +1,79 @@
+debug:
+  analysis_path: Code/analyses/repair-budget-SA.R
+  num_queues: 1
+  warmup: 10
+  sim_length: 100
+  num_data_pts: 100
+  num_obs: 80
+  num_replications: 5
+  seed: 42
+  theta_i_max: 3
+  save_trial_results: TRUE
+  results_directory: Results/repair_budget_SA
+
+  observation-queues:
+    queue-1:
+      lambda: 0.9
+      mu: 1
+      servers: 2
+      queue_cap: 5
+
+  params:
+    budget:
+      min: 5       # Start of the sequence
+      max: 15      # End of the sequence
+      num_samples: 3   # Number of points in the sequence
+      type: int
+
+  plot:
+    x_axis: budget
+    y_axis: 
+      primary: L(S')
+      secondary: Runtime (sec.)
+    style: whitegrid
+    size: (8,6)
+    plot_title: ['$\nu_{\pi_{S(t)\,<\,c}}$', "$\\nu_{\\bar{L}}$"]
+    legend_title: "Repair Estimate:\n % of Queue $\\lambda$"
+    axes_names:
+      xlabel: Repair Budget ($\delta$)
+      ylabel: $\nu$
+
+
+full:
+  analysis_path: Code/analyses/repair-budget-SA.R
+  num_queues: 1
+  warmup: 1000
+  sim_length: 500
+  num_data_pts: 500
+  num_obs: 50
+  num_replications: 30
+  seed: 42
+  theta_i_max: 4
+  save_trial_results: TRUE
+  results_directory: Results/repair_budget_SA
+
+  observation-queues:
+    queue-1:
+      lambda: 0.9
+      mu: 1
+      servers: 2
+      queue_cap: 100
+
+  params:
+    budget:
+      min: 50       # Start of the sequence
+      max: 700     # End of the sequence
+      q: 50 # Spacing between experiment 
+      
+  plot:
+    x_axis: Repair Budget
+    y_axis: 
+      primary: L(S')
+      secondary: Runtime (sec.)
+    style: whitegrid
+    size: (8,6)
+    plot_title: ['$\nu_{\pi_{S(t)\,<\,c}}$', "$\\nu_{\\bar{L}}$"]
+    legend_title: "Repair Estimate:\n % of Queue $\\lambda$"
+    axes_names:
+      xlabel: Repair Budget ($\delta$)
+      ylabel: $\nu$

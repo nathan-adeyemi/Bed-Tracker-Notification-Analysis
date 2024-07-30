@@ -1,0 +1,51 @@
+# Run the Initial Estimate Sensitivity Analysis 
+python \
+     slurm-launch.py \
+     --partition=short \
+     --time=12:00:00 \
+     --memory=36 \
+     --num-workers=3 \
+     --exp-name=estimate_sensitivity_analysis \
+     --add-args="large_test"
+
+# Run the repair budget sensitivity analysis
+python \
+     slurm-launch.py \
+     --partition=short \
+     --time=8:00:00 \
+     --num-workers=4 \
+     --exp-name=repair-budget-SA \
+     --backend=dask \
+     --config=full \
+
+
+# Run the single queue observation density sensitivity analysis
+python \
+     slurm-launch.py \
+     --partition=long \
+     --time=2-00:00:00 \
+     --num-workers=6 \
+     --exp-name=observation-density \
+     --backend=dask \
+     --config=full \
+     --num-queues=1
+
+# Run the multi queue observation density sensitivity analysis
+python \
+     slurm-launch.py \
+     --partition=long \
+     --time=2-00:00:00 \
+     --num-workers=6 \
+     --exp-name=observation-density \
+     --backend=dask \
+     --config=full \
+     --num-queues=2
+
+# Run the empirical bed registry analysis
+python slurm-launch.py \
+     --partition=short \
+     --time=16:00:00 \
+     --num-workers=8\
+     --exp-name=bed-registry-analysis \
+     --backend=dask \
+     --config=full

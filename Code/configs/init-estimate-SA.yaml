@@ -1,0 +1,65 @@
+debug: 
+  theta_i_max: 3
+  num_obs: 10
+  results_directory: Results/numerical_experiments/estimate_sensitivity_analysis
+  num_data_pts: 80
+  plot_x_limts: 150
+
+  queue-1:
+    servers: 10
+    queue_cap: 0
+    warmup: 10
+    sim_length: 100
+
+  params:
+    lambda: 
+      true: 0.75
+      min: 0.25
+      max: 1.5
+      num_samples: 6
+    mu: 
+      true: 0.15
+      min: 0.05
+      max: 0.5
+      num_samples: 6
+  
+
+test:
+  num_data_pts: 500
+  results_directory: Results/numerical_experiments/estimate_sensitivity_analysis
+  plot_x_limts: 250
+  theta_i_max: 7
+  num_obs: 150
+
+  observation-queue-1:
+    servers: 30
+    queue_cap: 5
+    warmup: 10
+    sim_length: 250
+
+  params:
+    lambda: 
+      true: 0.9
+      min: 0.5
+      max: 1.5
+      num_samples: 20
+
+full:
+  num_data_pts: 500
+  results_directory: Results/numerical_experiments/estimate_sensitivity_analysis
+  plot_x_limts: 250
+  theta_i_max: 7
+  num_obs: 150
+
+  observation-queue-1:
+    servers: 30
+    queue_cap: 5
+    warmup: 1000
+    sim_length: 500
+
+  params:
+    lambda: 
+      true: 0.9
+      min: 0.5
+      max: 1.5
+      num_samples: 20
