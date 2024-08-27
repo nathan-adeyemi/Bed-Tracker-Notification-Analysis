@@ -23,8 +23,7 @@ lambda <-
 
 sim_output <- mclapply(
   X = seq(num_replications),
-  FUN = function(i) {
-                
+  FUN = function(i) {             
     
     traj <- gen_sample_queue_states(
       num_reps = 1,

@@ -7,6 +7,7 @@ debug:
   delta: 50
   num_replications: 3
   seed: 42
+  init_est_proportion: 1
   observation-queues:
     queue-1:
       lambda: 0.9
@@ -23,10 +24,7 @@ debug:
       min: 0.5
       max: 0.75
       q: 0.1
-    init_est_proportion:
-      min: 0.85
-      max: 1.15
-      q: 0.05
+    
   plot:
       x_axis: observation_density
       style: whitegrid
@@ -42,8 +40,9 @@ full:
   results_directory: Results/observation_analysis
   theta_i_max: 4
   delta: 300
-  num_replications: 16
+  num_replications: 50
   seed: 42
+  # init_est_proportion: 1
   observation-queues:
     queue-1:
       lambda: 0.9

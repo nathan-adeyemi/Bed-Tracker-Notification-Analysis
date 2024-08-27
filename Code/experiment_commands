@@ -16,36 +16,24 @@ python \
      --num-workers=4 \
      --exp-name=repair-budget-SA \
      --backend=dask \
-     --config=full \
+     --config=full 
 
-
-# Run the single queue observation density sensitivity analysis
+# Run the observation density sensitivity analysis
 python \
      slurm-launch.py \
-     --partition=long \
-     --time=2-00:00:00 \
-     --num-workers=6 \
+     --partition=short \
+     --time=12:00:00 \
      --exp-name=observation-density \
-     --backend=dask \
+     --backend=multiprocessing \
      --config=full \
+     --num-cpus=24 \
      --num-queues=1
-
-# Run the multi queue observation density sensitivity analysis
-python \
-     slurm-launch.py \
-     --partition=long \
-     --time=2-00:00:00 \
-     --num-workers=6 \
-     --exp-name=observation-density \
-     --backend=dask \
-     --config=full \
-     --num-queues=2
 
 # Run the empirical bed registry analysis
 python slurm-launch.py \
      --partition=short \
      --time=16:00:00 \
-     --num-workers=8\
+     --num-workers=8 \
      --exp-name=bed-registry-analysis \
      --backend=dask \
      --config=full

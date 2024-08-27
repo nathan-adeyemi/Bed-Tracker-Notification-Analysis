@@ -20,7 +20,7 @@ def train_fn(param) -> dict:
     if args.num_queues:
         param.update({'num_queues': args.num_queues})
     
-    if args.experiment == 'observation-density':
+    if args.exp_name == 'observation-density':
         train_scratch_path = os.path.join(scratch_path, 'single-queue' if args.num_queues == 1 else "multi-queue") 
     else:
         train_scratch_path = scratch_path
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     )
     
     parser.add_argument(
-        "--experiment",
+        "--exp-name",
         choices=[re.sub("\\.R|\\.r", "", i) for i in os.listdir("Code/analyses")],
         default="observation-density",
         help="Choose the paramter tuning job to execute",
@@ -91,10 +91,12 @@ if __name__ == "__main__":
         type=str,
         default='short'
     )
+    
+    parser.add_argument("--num-cpus", action="store", default=None)
 
     args = parser.parse_args()
-    yml_path = f"Code/configs/{args.experiment}.yaml"
-    scratch_path = os.path.join("/scratch/adeyemi.n/", args.experiment)
+    yml_path = f"Code/configs/{args.exp_name}.yaml"
+    scratch_path = os.path.join("/scratch/adeyemi.n/", args.exp_name)
     if not os.path.exists(scratch_path):
         os.makedirs(scratch_path)
 
@@ -121,7 +123,7 @@ if __name__ == "__main__":
     np.random.seed(seed)
 
     # Generate the oringal state and observation sequences    
-    if args.experiment == "repair-budget-SA":
+    if args.exp_name == "repair-budget-SA":
         _ = train_fn(
             param = 
             {
@@ -135,10 +137,12 @@ if __name__ == "__main__":
     else:
         job = worker_pool.map(train_fn, results_df.to_dict(orient='records'))
         if args.backend == 'dask':
-            job_results=worker_pool.gather(job)
+            results=worker_pool.gather(job)
+        else:
+            results = job
 
     # Convert analysis results results to DataFrame
-    job_results = pd.DataFrame(job_results, columns = list(job_results[0].keys()))
+    job_results = pd.DataFrame(results, columns = list(results[0].keys()))
 
     # Combine results
     results_df = pd.concat(
@@ -148,7 +152,7 @@ if __name__ == "__main__":
         path_or_buf=Path(os.path.join(results_directory, 'results_df.csv')).resolve()
     )
     
-    if args.experiment == "repair-budget-SA":
+    if args.exp_name == "repair-budget-SA":
         bash_command = ";".join([
             'source .bashrc', 
             "Rscript Code/analyses/plot-repair_budget-SA.R"
@@ -158,4 +162,3 @@ if __name__ == "__main__":
             bash_command,
             shell = True
         )
-

@@ -1,5 +1,6 @@
 import sys
 sys.path.append('src')
+
 import os
 import utils
 import subprocess
@@ -9,7 +10,10 @@ import re
 import time
 from pathlib import Path
 
-def run_r_job(input_param: dict, cfg_path: str, cfg_opt: str, scratch_path: str) -> dict:
+def run_r_job(input_param: dict, 
+              cfg_path: str, 
+              cfg_opt: str, 
+              scratch_path: str) -> dict:
         
     # trial_name = f"trial-{utils.generate_random_string(n_char = 6)}"
     trial_path = Path(os.path.join(scratch_path, dict_to_path(input_param))).resolve()
@@ -66,7 +70,6 @@ def _find_and_connect(server_wait_tol: int = 1) -> socket.socket:
 
     return server, port
 
-
 def _find_available_port(print_port=False):
     # Function to find an available port
 
@@ -86,7 +89,6 @@ def _find_available_port(print_port=False):
         print(port)
 
     return port
-
 
 def read_json_con(socket, max_length: int = 256):
     json_string = ""

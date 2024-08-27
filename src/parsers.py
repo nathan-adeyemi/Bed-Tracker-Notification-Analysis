@@ -14,7 +14,7 @@ from multiprocessing import Pool
 
 def parse_args(cfg, args):
     
-    if args.experiment == 'observation-density':
+    if args.exp_name == 'observation-density':
         results_directory = os.path.join(cfg.get("results_directory"), 'single-queue' if args.num_queues == 1 else "multi-queue") 
     else:
         results_directory = cfg.get("results_directory") 
@@ -46,7 +46,7 @@ def parse_args(cfg, args):
                 step=param.get("max")/param.get("num_samples"),
             ))
             
-        if param.get('type') == int:
+        if param.get('type') == "int":
             p = np.floor(p)
         sub_df.append(p)
         
@@ -69,7 +69,7 @@ def parse_cluster_cfg(cli_args):
         cluster_cfg = utils.read_yaml(Path("Code/configs/cluster.yaml").resolve()).get(cli_args.backend).get(cli_args.config)    
         
     if cli_args.backend == 'dask':
-        cluster_cfg['log_directory'] = os.path.join(cluster_cfg.get('log_directory'), cli_args.experiment, cli_args.config)
+        cluster_cfg['log_directory'] = os.path.join(cluster_cfg.get('log_directory'), cli_args.exp_name, cli_args.config)
         num_workers = int(cli_args.num_workers)
         cluster_cfg.update({"walltime": cli_args.time, "queue": cli_args.partition})
         # Set up Dask distr cluster and client
@@ -84,6 +84,6 @@ def parse_cluster_cfg(cli_args):
         for module in ['parsers','utils','runner']:
             worker_pool.upload_file(f"src/{module}.py")
     elif cli_args.backend == 'multiprocessing':
-        worker_pool = Pool()
+        worker_pool = Pool(cli_args.num_cpus)
     return worker_pool
 

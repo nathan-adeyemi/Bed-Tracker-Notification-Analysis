@@ -37,10 +37,9 @@ if(!interactive()){
   arg_list <- fromJSON(read_json_con(client_socket))
 }
 cat("Beginning analysis trial with argument: \n")
-print(arg_list)
+# print(arg_list)
 list2env(arg_list,environment())
 source(analysis_path)
-
 
 if(!interactive()){
 

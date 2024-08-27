@@ -25,4 +25,4 @@ multiprocessing:
   debug:
     processes: 20
   full:
-    processes: 80
+    processes: 100

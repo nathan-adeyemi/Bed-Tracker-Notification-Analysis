@@ -2,6 +2,9 @@ import yaml
 import time
 import string
 import random
+import os
+import shutil
+import glob 
 
 def read_yaml(filename):
     with open(filename, "r") as file:
@@ -36,3 +39,29 @@ def generate_random_string(n_char: int = 10):
     random_string = "".join(random.choices(char_set, k=n_char))
     return random_string
 
+
+def find_previous_replications(target_dir, pattern):
+    matching_files = glob.glob(os.path.join(target_dir, pattern))
+    new_subfolder = "old"
+    for root, dirs, files in traverse_directories(root_dir=target_dir):
+        for file in files:
+            if os.path.join(root, file) not in matching_files:
+                shutil.move(
+                    os.path.join(root, file), os.path.join(root, new_subfolder, file)
+                )
+        for dir in dirs:
+            if os.path.join(root, dir) not in matching_files:
+                shutil.move(
+                    os.path.join(root, dir), os.path.join(root, new_subfolder, dir)
+                )
+def traverse_directories(root_dir):
+    """Traverses a directory and its subdirectories recursively.
+
+    Args:
+        root_dir (str): The root directory to start from.
+
+    Yields:
+        tuple: A tuple containing the current directory path, a list of subdirectories, and a list of files.
+    """
+    for root, dirs, files in os.walk(root_dir):
+        yield root, dirs, files
